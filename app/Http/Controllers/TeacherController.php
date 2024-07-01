@@ -11,7 +11,7 @@ class TeacherController extends Controller
 
     public function getTeachers(Request $request)
     {
-        return response()->json(User::where('type', 'teacher')->get());
+        return response()->json(Teacher::all());
     }
 
     public function getTeacher(Request $request, $id)
