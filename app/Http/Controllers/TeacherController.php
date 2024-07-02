@@ -16,19 +16,19 @@ class TeacherController extends Controller
 
     public function getTeacher(Request $request, $id)
     {
-        return response()->json(User::find($id));
+        return response()->json(Teacher::find($id));
     }
 
     public function updateTeacher(Request $request, $id)
     {
-        $teacher = User::find($id);
+        $teacher = Teacher::find($id);
         $teacher->update($request->all());
         return response()->json($teacher);
     }
 
     public function createTeacher(Request $request)
     {
-        $teacher = User::create($request->all());
+        $teacher = Teacher::create($request->all());
         return response()->json($teacher);
     }
 

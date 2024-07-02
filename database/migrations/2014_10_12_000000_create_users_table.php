@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->enum('type',['admin','teacher','parent'])
                 ->default('teacher');
-            $table->json('infos')->default('[]');
+            $table->json('infos')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();

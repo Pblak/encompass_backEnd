@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\ParentController;
+use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TeacherController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -26,17 +28,28 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/updateEvent/{id}', [EventController::class, 'updateEvent']);
     Route::post('/createEvent', [EventController::class, 'createEvent']);
 
-    Route::get('/getKids', [App\Http\Controllers\KidController::class, 'getKids']);
-    Route::get('/getKid/{id}', [App\Http\Controllers\KidController::class, 'getKid']);
-    Route::put('/updateKid/{id}', [App\Http\Controllers\KidController::class, 'updateKid']);
-    Route::post('/createKid', [App\Http\Controllers\KidController::class, 'createKid']);
+//    Route::get('/getNotifications', [NotificationController::class, 'getNotifications']);
+//    Route::get('/getNotification/{id}', [NotificationController::class, 'getNotification']);
+//    Route::put('/updateNotification/{id}', [NotificationController::class, 'updateNotification']);
+//    Route::post('/createNotification', [NotificationController::class, 'createNotification']);
+//    Route::delete('/deleteNotification/{id}', [NotificationController::class, 'deleteNotification']);
 
+    Route::get('/getParents', [ParentController::class, 'getParents']);
+    Route::get('/getParent/{id}', [ParentController::class, 'getParent']);
+    Route::put('/updateParent/{id}', [ParentController::class, 'updateParent']);
+    Route::post('/createParent', [ParentController::class, 'createParent']);
 
-    // teacher routes
     Route::get('/getTeachers', [TeacherController::class, 'getTeachers']);
     Route::get('/getTeacher/{id}', [TeacherController::class, 'getTeacher']);
     Route::put('/updateTeacher/{id}', [TeacherController::class, 'updateTeacher']);
     Route::post('/createTeacher', [TeacherController::class, 'createTeacher']);
+
+    Route::get('/getStudents', [StudentController::class, 'getStudents']);
+    Route::get('/getStudent/{id}', [StudentController::class, 'getStudent']);
+    Route::put('/updateStudent/{id}', [StudentController::class, 'updateStudent']);
+    Route::post('/createStudent', [StudentController::class, 'createStudent']);
+    Route::delete('/deleteStudent/{id}', [StudentController::class, 'deleteStudent']);
+
 
 
 });
