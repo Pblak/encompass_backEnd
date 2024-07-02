@@ -11,4 +11,9 @@ class Student extends user
     protected $table = 'kids'; // Specify the table name explicitly if necessary
 
 
+    public function instruments()
+    {
+        return $this->belongsToMany(Instrument::class);
+    }
+
 }

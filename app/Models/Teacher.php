@@ -19,6 +19,11 @@ class Teacher extends User
         return static::ofType('teacher')->get($columns);
     }
 
+    public function instruments()
+    {
+        return $this->belongsToMany(Instrument::class);
+    }
+
 }
 
 
