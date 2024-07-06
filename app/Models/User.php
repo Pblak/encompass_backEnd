@@ -19,10 +19,13 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'first_name',
+        'last_name',
         'email',
         'password',
-        'info'
+        'infos'
     ];
+    protected $appends = ['name'];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -42,13 +45,14 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'infos' => 'array'
     ];
 
 
-    public function scopeOfType($query, $type)
-    {
-        return $query->where('type', $type);
-    }
 
+    public function getNameAttribute()
+    {
+        return $this->attributes['first_name'] . ' ' . $this->attributes['last_name'];
+    }
 
 }

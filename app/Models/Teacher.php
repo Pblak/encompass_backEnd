@@ -7,21 +7,21 @@ use Illuminate\Database\Eloquent\Model;
 
 class Teacher extends User
 {
-    protected $table = 'users'; // Specify the table name explicitly if necessary
 
+    protected $table = 'teachers';
     // Override the default Eloquent methods as needed
-    public static function get($columns = ['*'])
-    {
-        return static::ofType('teacher')->get($columns);
-    }
-    public static function all($columns = ['*'])
-    {
-        return static::ofType('teacher')->get($columns);
-    }
+//    public static function get($columns = ['*'])
+//    {
+//        return static::ofType('teacher')->get($columns);
+//    }
+//    public static function all($columns = ['*'])
+//    {
+//        return static::ofType('teacher')->get($columns);
+//    }
 
     public function instruments()
     {
-        return $this->belongsToMany(Instrument::class);
+        return $this->belongsToMany(Instrument::class, 'instrument_teacher', 'user_id', 'instrument_id');
     }
 
 }

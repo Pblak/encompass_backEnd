@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('instruments', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->longText('image')->nullable();
             $table->timestamps();
         });
     }
-
     public function down()
     {
         Schema::dropIfExists('instruments');

@@ -4,18 +4,16 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Parents extends User
 {
     use HasFactory;
-    protected $table = 'users'; // Specify the table name explicitly if necessary
 
-    public static function get($columns = ['*'])
+
+    protected $table = 'parents';
+    public function students(): HasMany
     {
-        return static::ofType('parent')->get($columns);
-    }
-    public static function all($columns = ['*'])
-    {
-        return static::ofType('parent')->get($columns);
+        return $this->hasMany(Student::class, 'parent_id');
     }
 }

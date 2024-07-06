@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\InstrumentController;
 use App\Http\Controllers\ParentController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TeacherController;
@@ -41,7 +42,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/getTeachers', [TeacherController::class, 'getTeachers']);
     Route::get('/getTeacher/{id}', [TeacherController::class, 'getTeacher']);
-    Route::put('/updateTeacher/{id}', [TeacherController::class, 'updateTeacher']);
+    Route::post('/updateTeacher', [TeacherController::class, 'updateTeacher']);
     Route::post('/createTeacher', [TeacherController::class, 'createTeacher']);
 
     Route::get('/getStudents', [StudentController::class, 'getStudents']);
@@ -49,6 +50,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/updateStudent/{id}', [StudentController::class, 'updateStudent']);
     Route::post('/createStudent', [StudentController::class, 'createStudent']);
     Route::delete('/deleteStudent/{id}', [StudentController::class, 'deleteStudent']);
+
+    // instruments
+    Route::get('/getInstruments', [InstrumentController::class, 'getInstruments']);
+    Route::get('/getInstrument/{id}', [InstrumentController::class, 'getInstrument']);
+    Route::post('/updateInstrument', [InstrumentController::class, 'updateInstrument']);
+    Route::post('/createInstrument', [InstrumentController::class, 'createInstrument']);
+    Route::delete('/deleteInstrument/{id}', [InstrumentController::class, 'deleteInstrument']);
 
 
 
