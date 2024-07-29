@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\InstrumentController;
+use App\Http\Controllers\LessonController;
 use App\Http\Controllers\ParentController;
+use App\Http\Controllers\RoomController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TeacherController;
 use Illuminate\Http\Request;
@@ -57,6 +59,20 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/updateInstrument', [InstrumentController::class, 'updateInstrument']);
     Route::post('/createInstrument', [InstrumentController::class, 'createInstrument']);
     Route::delete('/deleteInstrument/{id}', [InstrumentController::class, 'deleteInstrument']);
+
+    // lessons
+    Route::get('/getLessons', [LessonController::class, 'getLessons']);
+    Route::get('/getLesson/{id}', [LessonController::class, 'getLesson']);
+    Route::post('/updateLesson', [LessonController::class, 'updateLesson']);
+    Route::post('/createLesson', [LessonController::class, 'createLesson']);
+    Route::delete('/deleteLesson/{id}', [LessonController::class, 'deleteLesson']);
+
+    // rooms
+    Route::get('/getRooms', [RoomController::class, 'getRooms']);
+    Route::get('/getRoom/{id}', [RoomController::class, 'getRoom']);
+    Route::post('/updateRoom', [RoomController::class, 'updateRoom']);
+    Route::post('/createRoom', [RoomController::class, 'createRoom']);
+    Route::delete('/deleteRoom/{id}', [RoomController::class, 'deleteRoom']);
 
 
 

@@ -11,15 +11,21 @@ class AuthController extends Controller
     {
         $request->validate([
             'email' => 'required|email',
-            'password' => 'required'
+            'password' => 'required',
         ]);
-        if (!auth()->attempt($request->only('email', 'password'))) {
+        $accountType = $request->accountType &&
+        in_array($request->accountType, ['student', 'teacher', 'parent']) ? $request->accountType : 'web';
+        if (!auth($accountType)->attempt($request->only('email', 'password'))) {
+
             return response()->json([
-                'message' => 'Invalid login details'
+
+                    'message' => 'Invalid login details'
+
             ], 401);
         }
-        $user = auth()->user();
+        $user = auth($accountType)->user();
         $token = $user->createToken('token')->plainTextToken;
+        $user['accountType'] = $accountType;
         return response()->json([
             'token' => $token,
             'user' => $user

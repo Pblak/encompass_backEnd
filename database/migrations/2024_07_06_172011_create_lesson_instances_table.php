@@ -16,7 +16,6 @@ return new class extends Migration
             $table->foreignId('lesson_id')->constrained('lessons');
             $table->foreignId('room_id')->constrained('rooms');
             $table->dateTime('start');
-            $table->dateTime('end');
             $table->integer('duration');
             $table->enum('status', ['scheduled', 'in_progress', 'completed','cancelled']);
             $table->timestamps();

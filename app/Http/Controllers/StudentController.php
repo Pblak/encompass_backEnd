@@ -34,13 +34,18 @@ class StudentController extends Controller
             'last_name' => 'required',
             'email' => 'required|email|unique:students,email',
             'password' => 'required',
-            'parent_id' => 'required|exists:users,id',
+            'parent_id' => 'required|exists:parents,id',
         ]);
         DB::beginTransaction();
         try {
             $student = Student::create($request->all());
             DB::commit();
-            return response()->json($student);
+
+            return  response()->json([
+                "result" => $student,
+                "message" =>  "Student created successfully",
+                "_t" => "success",
+            ]);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['error' => $e->getMessage()], 500);

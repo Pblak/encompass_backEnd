@@ -17,10 +17,11 @@ return new class extends Migration {
             $table->foreignId('instrument_id')->constrained('instruments');
             $table->foreignId('room_id')->constrained('rooms')->nullable();
             $table->json('planning');
+            $table->json('instrument_plan');
             $table->integer('frequency')->default(1);
-            $table->integer('duration')->default(30);
-            $table->integer('price')->default(0);
-            $table->integer('active')->default(1);
+            // color default 0b6ab9
+            $table->integer('confirmed')->default(1);
+            $table->string('color')->default('#0b6ab9');
             $table->text('notes')->nullable();
             $table->timestamps();
         });

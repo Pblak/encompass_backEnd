@@ -17,6 +17,4 @@ class Room extends Model
         return $this->hasMany(Lesson::class, 'room_id', 'id');
     }
 
-
-
 }

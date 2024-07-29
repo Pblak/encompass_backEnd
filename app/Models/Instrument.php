@@ -9,7 +9,11 @@ class Instrument extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'image'];
+    protected $fillable = ['name', 'image' ,'plans'];
+
+    protected $casts = [
+        'plans' => 'array'
+    ];
 
     public function teachers()
     {

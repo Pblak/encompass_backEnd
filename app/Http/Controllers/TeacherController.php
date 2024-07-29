@@ -46,7 +46,11 @@ class TeacherController extends Controller
             ]);
 
             DB::commit();
-            return response()->json($teacher);
+            return response()->json([
+                "result" => $teacher,
+                "message" =>  "Teacher created successfully",
+                "_t" => "success",
+            ]);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['error' => $e->getMessage()], 500);

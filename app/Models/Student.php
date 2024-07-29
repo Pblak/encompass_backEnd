@@ -12,6 +12,19 @@ class Student extends user
 
     protected $table = 'students';
 
+    protected $fillable = [
+        'first_name',
+        'last_name',
+        'email',
+        'password',
+        'parent_id',
+        'infos'
+    ];
+
+    protected $casts = [
+        'infos' => 'array',
+    ];
+
     public function instruments(): BelongsToMany
     {
         return $this->belongsToMany(Instrument::class);

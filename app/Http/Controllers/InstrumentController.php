@@ -22,6 +22,9 @@ class InstrumentController extends Controller
     public function createInstrument(Request $request)
     {
 
+
+
+
         DB::beginTransaction();
         try {
             $instrument = Instrument::create($request->all());
@@ -30,9 +33,9 @@ class InstrumentController extends Controller
 
             if ($request->hasFile('image')) {
                 $imageFile = $request->file('image');
-                $path =  'images/instruments/' . $instrument->id.'/icon.'.$imageFile->getClientOriginalExtension() ;
+                $path = 'images/instruments/' . $instrument->id . '/icon.' . $imageFile->getClientOriginalExtension();
                 Storage::disk('public')->put($path, file_get_contents($imageFile->getRealPath()));
-                $instrument->image = 'storage/'.$path;
+                $instrument->image = 'storage/' . $path;
                 $instrument->save();
             }
 
@@ -57,9 +60,9 @@ class InstrumentController extends Controller
 
             if ($request->hasFile('newImage')) {
                 $imageFile = $request->file('newImage');
-                $path =  'images/instruments/' . $instrument->id.'/icon.'.$imageFile->getClientOriginalExtension() ;
+                $path = 'images/instruments/' . $instrument->id . '/icon.' . $imageFile->getClientOriginalExtension();
                 Storage::disk('public')->put($path, file_get_contents($imageFile->getRealPath()));
-                $instrument->image = 'storage/'.$path;
+                $instrument->image = 'storage/' . $path;
                 $instrument->save();
             }
 
