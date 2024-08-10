@@ -16,11 +16,8 @@ class AuthController extends Controller
         $accountType = $request->accountType &&
         in_array($request->accountType, ['student', 'teacher', 'parent']) ? $request->accountType : 'web';
         if (!auth($accountType)->attempt($request->only('email', 'password'))) {
-
             return response()->json([
-
-                    'message' => 'Invalid login details'
-
+                'message' => 'Invalid login details'
             ], 401);
         }
         $user = auth($accountType)->user();

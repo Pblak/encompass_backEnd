@@ -7,6 +7,7 @@ use App\Http\Controllers\ParentController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TeacherController;
+use App\Http\Controllers\TransactionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -61,7 +62,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/deleteInstrument/{id}', [InstrumentController::class, 'deleteInstrument']);
 
     // lessons
-    Route::get('/getLessons', [LessonController::class, 'getLessons']);
+        Route::get('/getLessons', [LessonController::class, 'getLessons']);
     Route::get('/getLesson/{id}', [LessonController::class, 'getLesson']);
     Route::post('/updateLesson', [LessonController::class, 'updateLesson']);
     Route::post('/createLesson', [LessonController::class, 'createLesson']);
@@ -74,6 +75,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/createRoom', [RoomController::class, 'createRoom']);
     Route::delete('/deleteRoom/{id}', [RoomController::class, 'deleteRoom']);
 
-
+    // transactions
+    Route::get('/getTransactions', [TransactionController::class, 'getTransactions']);
+    Route::get('/getTransaction/{id}', [TransactionController::class, 'getTransaction']);
+    Route::post('/updateTransaction', [TransactionController::class, 'updateTransaction']);
+    Route::post('/createTransaction', [TransactionController::class, 'createTransaction']);
+    Route::delete('/deleteTransaction/{id}', [TransactionController::class, 'deleteTransaction']);
 
 });

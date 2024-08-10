@@ -12,14 +12,17 @@ return new class extends Migration {
     {
         Schema::create('lessons', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('teacher_id')->constrained('users');
-            $table->foreignId('student_id')->constrained('students');
-            $table->foreignId('instrument_id')->constrained('instruments');
-            $table->foreignId('room_id')->constrained('rooms')->nullable();
+            $table->foreignId('teacher_id')->constrained('users')
+                ->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('student_id')->constrained('students')
+                ->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('instrument_id')->constrained('instruments')
+                ->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('room_id')->constrained('rooms')
+                ->onDelete('cascade')->onUpdate('cascade')->nullable();
             $table->json('planning');
             $table->json('instrument_plan');
             $table->integer('frequency')->default(1);
-            // color default 0b6ab9
             $table->integer('confirmed')->default(1);
             $table->string('color')->default('#0b6ab9');
             $table->text('notes')->nullable();
