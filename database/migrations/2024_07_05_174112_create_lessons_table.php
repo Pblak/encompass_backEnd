@@ -12,14 +12,10 @@ return new class extends Migration {
     {
         Schema::create('lessons', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('teacher_id')->constrained('users')
-                ->onDelete('cascade')->onUpdate('cascade');
-            $table->foreignId('student_id')->constrained('students')
-                ->onDelete('cascade')->onUpdate('cascade');
-            $table->foreignId('instrument_id')->constrained('instruments')
-                ->onDelete('cascade')->onUpdate('cascade');
-            $table->foreignId('room_id')->constrained('rooms')
-                ->onDelete('cascade')->onUpdate('cascade')->nullable();
+            $table->unsignedBigInteger('teacher_id');
+            $table->unsignedBigInteger('student_id');
+            $table->unsignedBigInteger('instrument_id');
+            $table->unsignedBigInteger('room_id');
             $table->json('planning');
             $table->json('instrument_plan');
             $table->integer('frequency')->default(1);
@@ -27,6 +23,11 @@ return new class extends Migration {
             $table->string('color')->default('#0b6ab9');
             $table->text('notes')->nullable();
             $table->timestamps();
+
+//            $table->foreign('teacher_id')->references('id')->on('teachers')->onDelete('cascade')->onUpdate('cascade');
+//            $table->foreign('student_id')->references('id')->on('students')->onDelete('cascade')->onUpdate('cascade');
+//            $table->foreign('instrument_id')->references('id')->on('instruments')->onDelete('cascade')->onUpdate('cascade');
+//            $table->foreign('room_id')->references('id')->on('rooms')->onDelete('cascade')->onUpdate('cascade');
         });
     }
 

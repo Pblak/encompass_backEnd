@@ -13,12 +13,15 @@ return new class extends Migration
     {
         Schema::create('lesson_instances', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('lesson_id')->constrained('lessons');
-            $table->foreignId('room_id')->constrained('rooms');
+            $table->unsignedBigInteger('lesson_id');
+            $table->unsignedBigInteger('room_id');
             $table->dateTime('start');
             $table->integer('duration');
             $table->enum('status', ['scheduled', 'in_progress', 'completed','cancelled']);
             $table->timestamps();
+
+//            $table->foreign('lesson_id')->references('id')->on('lessons')->onDelete('cascade')->onUpdate('cascade');
+//            $table->foreign('room_id')->references('id')->on('rooms')->onDelete('cascade')->onUpdate('cascade');
         });
     }
 
