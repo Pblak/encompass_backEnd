@@ -9,7 +9,7 @@ class Room extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'capacity'];
+    protected $fillable = ['name', 'capacity', 'notes'];
 
     // Room has many lessons that have the same instrument
     public function lessons()

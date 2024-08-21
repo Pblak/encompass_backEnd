@@ -20,12 +20,29 @@ class LessonController extends Controller
 
     public function getLessons(Request $request)
     {
-        return response()->json(Lesson::with(['teacher', 'student', 'instrument', 'room' ,'instances'])->get());
+        $lessons = Lesson::with([
+            'teacher',
+            'student',
+            'instrument',
+            'room' ,
+            'instances',
+            'transactions',
+        ])->get();
+        return response()->json($lessons);
     }
 
     public function getLesson(Request $request)
     {
-        return response()->json(Lesson::find($request->id));
+        $lesson = Lesson::with([
+            'teacher',
+            'student',
+            'instrument',
+            'room' ,
+            'instances',
+            'transactions',
+        ])->find($request->id);
+
+        return response()->json($lesson);
     }
 
     public function updateLesson(Request $request)

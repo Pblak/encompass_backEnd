@@ -25,6 +25,11 @@ class Lesson extends Model
         'instrument_plan' => 'array',
     ];
 
+    protected $appends = [
+        'price',
+        'payed_price',
+    ];
+
     public function teacher()
     {
         return $this->hasOne(Teacher::class, 'id', 'teacher_id');
@@ -48,5 +53,28 @@ class Lesson extends Model
     public function instances()
     {
         return $this->hasMany(LessonInstance::class);
+    }
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class, 'lesson_id','id');
+    }
+
+    public function getPriceAttribute()
+    {
+        if (!$this->instrument_plan) return 0;
+        $total = collect($this->planning)->reduce(function ($acc, $val){
+            return $acc + count($val);
+    }, 0);
+        return $total * intval($this->instrument_plan['price']) * $this->frequency;
+    }
+
+    public function getPayedPriceAttribute()
+    {
+        return $this->transactions()
+            ->where('status','completed')->get()
+            ->reduce(function ($acc, $val){
+            return $acc + $val->amount;
+        }, 0);
     }
 }

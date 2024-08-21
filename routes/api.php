@@ -22,10 +22,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('/test', function () {
+    return response()->json(['message' => 'API is working!']);
+});
+
 // route for login
 Route::post('/login', [App\Http\Controllers\AuthController::class, 'login']);
 
-Route::middleware('auth:sanctum')->group(function () {
+
+Route::middleware( 'auth.multiGuard:student,teacher,parent,admin' )->group(function () {
+    Route::post('/logout', [App\Http\Controllers\AuthController::class, 'logout']);
 
     Route::get('/getEvents', [EventController::class, 'getEvents']);
     Route::get('/getEvent/{id}', [EventController::class, 'getEvent']);
@@ -62,7 +68,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/deleteInstrument/{id}', [InstrumentController::class, 'deleteInstrument']);
 
     // lessons
-        Route::get('/getLessons', [LessonController::class, 'getLessons']);
+    Route::get('/getLessons', [LessonController::class, 'getLessons']);
     Route::get('/getLesson/{id}', [LessonController::class, 'getLesson']);
     Route::post('/updateLesson', [LessonController::class, 'updateLesson']);
     Route::post('/createLesson', [LessonController::class, 'createLesson']);

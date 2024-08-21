@@ -6,10 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Laravel\Sanctum\HasApiTokens;
 
 class Student extends user
 {
-    use HasFactory;
+    use HasFactory, HasApiTokens;
 
     protected $table = 'students';
 

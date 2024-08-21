@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Sanctum\HasApiTokens;
+
 
 class Teacher extends User
 {
-
+        use HasFactory, HasApiTokens;
     protected $table = 'teachers';
     // Override the default Eloquent methods as needed
 //    public static function get($columns = ['*'])

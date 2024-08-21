@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Lesson;
 use App\Models\Student;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class TransactionController extends Controller
 {
@@ -13,9 +16,8 @@ class TransactionController extends Controller
 
     public function getTransactions(Request $request)
     {
-        $user = app('user_guard');
-        dd($user);
-        return response()->json(Transaction::all());
+        $transactions = $request->attributes->get('currentGuard') !=='admin'?$request->user()->transactions:Transaction::all();
+        return response()->json($transactions);
     }
 
     public function getTransaction(Request $request)
@@ -41,13 +43,29 @@ class TransactionController extends Controller
     public function createTransaction(Request $request)
     {
         $request->validate([
-            'student_id' => 'required|exists:students,id',
+            'lesson_id' => 'required|exists:lessons,id',
             'amount' => 'required|numeric',
-            'type' => 'required|string',
-            'description' => 'required|string',
         ]);
-        $transaction = Transaction::create($request->all());
-        return response()->json($transaction);
+        $lesson = Lesson::with(['transactions'])->find($request->lesson_id);
+
+        DB::beginTransaction();
+        try {
+            if ($lesson->payed_price + $request->amount > $lesson->price) {
+                return response()->json([
+                    "message" => "Transaction amount exceeds lesson price",
+                    "_t" => "error",
+                ]);
+            }
+            $request->user()->transactions()->create($request->all());
+            DB::commit();
+            return response()->json([
+                "message" =>  "Transaction created successfully",
+                "_t" => "success",
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 
     public function deleteTransaction(Request $request)

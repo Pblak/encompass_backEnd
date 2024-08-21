@@ -41,16 +41,20 @@ return [
             'provider' => 'users',
         ],
         'student' => [
-            'driver' => 'session',
+            'driver' => 'sanctum',
             'provider' => 'students',
         ],
         'teacher' => [
-            'driver' => 'session',
+            'driver' => 'sanctum',
             'provider' => 'teachers',
         ],
         'parent' => [
-            'driver' => 'session',
+            'driver' => 'sanctum',
             'provider' => 'parents',
+        ],
+        'admin' => [
+            'driver' => 'sanctum',
+            'provider' => 'users',
         ],
     ],
 
