@@ -169,8 +169,8 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         // youcef touch this
-//        Laravel\Sanctum\SanctumServiceProvider::class,
-        Laravel\Passport\PassportServiceProvider::class,
+        Laravel\Sanctum\SanctumServiceProvider::class,
+//        Laravel\Passport\PassportServiceProvider::class,
     ])->toArray(),
 
     /*
