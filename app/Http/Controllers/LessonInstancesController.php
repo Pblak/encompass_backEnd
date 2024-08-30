@@ -6,6 +6,7 @@ use App\Models\LessonInstance;
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Carbon\CarbonPeriod;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -24,7 +25,7 @@ class LessonInstancesController extends Controller
     /**
      * get the upcoming lessons for the student
      */
-    public function getLessonInstances(Request $request)
+    public function  getLessonInstances(Request $request): JsonResponse
     {
         return response()->json(LessonInstance::where("lesson_id", $request->lesson_id)->get());
     }
@@ -32,15 +33,38 @@ class LessonInstancesController extends Controller
     /**
      * get a specific lesson instance
      */
-    public function getLessonInstance(Request $request)
+    public function getLessonInstance(Request $request): JsonResponse
     {
         return response()->json(LessonInstance::find($request->id));
     }
 
-    /**
-     * @throws \Exception
-     */
-    public function createLessonInstances(Request $request)
+    public function updateLessonInstance(Request $request): JsonResponse
+    {
+        DB::beginTransaction();
+        try {
+            $request->validate([
+                'id' => 'required|exists:lesson_instances,id',
+                'status' => 'required|in:scheduled,in_progress,completed,cancelled',
+            ]);
+            $lessonInstance = LessonInstance::find($request->id);
+            $lessonInstance->update($request->all());
+            DB::commit();
+            return response()->json([
+                'message' => 'Lesson instance updated successfully to ' . $request->status,
+                'data' => $lessonInstance,
+                '_t' => "success",
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Lesson instance update failed!',
+                'error' => $e->getMessage(),
+                '_t' => "error",
+            ], 500);
+        }
+    }
+
+    public function createLessonInstances(Request $request): JsonResponse
     {
         $startDate = Carbon::parse($request->start_date);
         $newDate = $this->addCustomWeeks($startDate, $request->frequency);
@@ -60,7 +84,6 @@ class LessonInstancesController extends Controller
             $a = $date->dayOfWeek;
             if ( array_key_exists($a, $request->planning) ) {
                 $days_plannings = $request->planning[$a];
-
                 foreach ($days_plannings as $day_planning) {
                     $dateTime = $date->copy()->setTimeFromTimeString($day_planning['time']);
 
@@ -86,7 +109,7 @@ class LessonInstancesController extends Controller
         }
     }
 
-    private function addCustomWeeks(Carbon $date, int $weeks)
+    private function addCustomWeeks(Carbon $date, int $weeks): Carbon
     {
         // Calculate the days from the next day after the start date to Saturday
         $startDayOfWeek = $date->dayOfWeek; // 3 (Wednesday)

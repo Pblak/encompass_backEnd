@@ -14,5 +14,5 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     // redirect to encompass-online.com
-    return redirect('https://encompass-online.com');
+    return redirect(env('APP_URL'));
 });

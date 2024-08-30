@@ -31,8 +31,6 @@ class UpdateLessonStatusesJob implements ShouldQueue
     {
         // Get the current time
         $now = Carbon::now();
-
-
         // Update 'scheduled' lessons to 'cancelled'
         $cancelledInstances = LessonInstance::where('status', 'scheduled')
             ->whereRaw('DATE_ADD(start, INTERVAL duration MINUTE) < ?', [$now])

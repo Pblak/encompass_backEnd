@@ -3,6 +3,8 @@
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\InstrumentController;
 use App\Http\Controllers\LessonController;
+use App\Http\Controllers\LessonInstancesController;
+use App\Http\Controllers\PackageController;
 use App\Http\Controllers\ParentController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\StudentController;
@@ -67,12 +69,22 @@ Route::middleware( 'auth.multiGuard:student,teacher,parent,admin' )->group(funct
     Route::post('/createInstrument', [InstrumentController::class, 'createInstrument']);
     Route::delete('/deleteInstrument/{id}', [InstrumentController::class, 'deleteInstrument']);
 
+    // packages
+    Route::get('/getPackages', [PackageController::class, 'getPackages']);
+    Route::get('/getPackage/{id}', [PackageController::class, 'getPackage']);
+    Route::post('/updatePackage', [PackageController::class, 'updatePackage']);
+    Route::post('/createPackage', [PackageController::class, 'createPackage']);
+    Route::delete('/deletePackage/{id}', [PackageController::class, 'deletePackage']);
+
     // lessons
     Route::get('/getLessons', [LessonController::class, 'getLessons']);
     Route::get('/getLesson/{id}', [LessonController::class, 'getLesson']);
     Route::post('/updateLesson', [LessonController::class, 'updateLesson']);
     Route::post('/createLesson', [LessonController::class, 'createLesson']);
     Route::delete('/deleteLesson/{id}', [LessonController::class, 'deleteLesson']);
+
+    // lesson Instances
+    Route::post('/updateLessonInstance', [LessonInstancesController::class, 'updateLessonInstance']);
 
     // rooms
     Route::get('/getRooms', [RoomController::class, 'getRooms']);

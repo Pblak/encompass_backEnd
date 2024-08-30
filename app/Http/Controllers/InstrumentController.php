@@ -3,33 +3,28 @@
 namespace App\Http\Controllers;
 
 use App\Models\Instrument;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class InstrumentController extends Controller
 {
-    public function getInstruments(Request $request)
+    public function getInstruments(Request $request): JsonResponse
     {
         return response()->json(Instrument::with(['teachers', 'students'])->get());
     }
 
-    public function getInstrument(Request $request, $id)
+    public function getInstrument(Request $request, $id): JsonResponse
     {
         return response()->json(Instrument::find($id));
     }
 
-    public function createInstrument(Request $request)
+    public function createInstrument(Request $request): JsonResponse
     {
-
-
-
-
         DB::beginTransaction();
         try {
             $instrument = Instrument::create($request->all());
-            // put the $request->image into the storage into images/instruments/{instrument_id}/icon.png
-            // add the absolute path to the image field in the instrument table like this storage/images/instruments/{instrument_id}/icon.png
 
             if ($request->hasFile('image')) {
                 $imageFile = $request->file('image');
@@ -41,22 +36,21 @@ class InstrumentController extends Controller
 
 
             DB::commit();
-            return response()->json($instrument);
+            return response()->json([
+                'message' => 'Instrument created successfully',
+                '_t' => "success",
+            ]);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
-
-    public function updateInstrument(Request $request)
+    public function updateInstrument(Request $request): JsonResponse
     {
         DB::beginTransaction();
         try {
             $instrument = Instrument::findOrFail($request->id);
             $instrument->update($request->all());
-            // put the $request->image into the storage into images/instruments/{instrument_id}/icon.png
-            // add the absolute path to the image field in the instrument table like this
-            // storage/images/instruments/{instrument_id}/icon.png
 
             if ($request->hasFile('newImage')) {
                 $imageFile = $request->file('newImage');
@@ -67,7 +61,10 @@ class InstrumentController extends Controller
             }
 
             DB::commit();
-            return response()->json($instrument);
+            return response()->json([
+                'message' => 'Instrument updated successfully',
+                '_t' => "success",
+            ]);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['error' => $e->getMessage()], 500);
