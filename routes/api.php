@@ -6,6 +6,7 @@ use App\Http\Controllers\LessonController;
 use App\Http\Controllers\LessonInstancesController;
 use App\Http\Controllers\PackageController;
 use App\Http\Controllers\ParentController;
+use App\Http\Controllers\PaypalController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TeacherController;
@@ -50,17 +51,18 @@ Route::middleware( 'auth.multiGuard:student,teacher,parent,admin' )->group(funct
     Route::get('/getParent/{id}', [ParentController::class, 'getParent']);
     Route::put('/updateParent/{id}', [ParentController::class, 'updateParent']);
     Route::post('/createParent', [ParentController::class, 'createParent']);
+    Route::post('/deleteParent', [ParentController::class, 'deleteParent']);
 
     Route::get('/getTeachers', [TeacherController::class, 'getTeachers']);
     Route::get('/getTeacher/{id}', [TeacherController::class, 'getTeacher']);
     Route::post('/updateTeacher', [TeacherController::class, 'updateTeacher']);
     Route::post('/createTeacher', [TeacherController::class, 'createTeacher']);
 
-    Route::get('/getStudents', [StudentController::class, 'getStudents']);
+    Route::post('/getStudents', [StudentController::class, 'getStudents']);
     Route::get('/getStudent/{id}', [StudentController::class, 'getStudent']);
     Route::put('/updateStudent/{id}', [StudentController::class, 'updateStudent']);
     Route::post('/createStudent', [StudentController::class, 'createStudent']);
-    Route::delete('/deleteStudent/{id}', [StudentController::class, 'deleteStudent']);
+    Route::post('/deleteStudent', [StudentController::class, 'deleteStudent']);
 
     // instruments
     Route::get('/getInstruments', [InstrumentController::class, 'getInstruments']);
@@ -77,11 +79,11 @@ Route::middleware( 'auth.multiGuard:student,teacher,parent,admin' )->group(funct
     Route::delete('/deletePackage/{id}', [PackageController::class, 'deletePackage']);
 
     // lessons
-    Route::get('/getLessons', [LessonController::class, 'getLessons']);
+    Route::post('/getLessons', [LessonController::class, 'getLessons']);
     Route::get('/getLesson/{id}', [LessonController::class, 'getLesson']);
     Route::post('/updateLesson', [LessonController::class, 'updateLesson']);
     Route::post('/createLesson', [LessonController::class, 'createLesson']);
-    Route::delete('/deleteLesson/{id}', [LessonController::class, 'deleteLesson']);
+    Route::post('/deleteLesson/', [LessonController::class, 'deleteLesson']);
 
     // lesson Instances
     Route::post('/updateLessonInstance', [LessonInstancesController::class, 'updateLessonInstance']);
@@ -99,5 +101,8 @@ Route::middleware( 'auth.multiGuard:student,teacher,parent,admin' )->group(funct
     Route::post('/updateTransaction', [TransactionController::class, 'updateTransaction']);
     Route::post('/createTransaction', [TransactionController::class, 'createTransaction']);
     Route::delete('/deleteTransaction/{id}', [TransactionController::class, 'deleteTransaction']);
+    // paypal
+    Route::post('/createPaypalOrder' , [PaypalController::class , 'createOrder']);
+    Route::post('/capturePaypalOrder' , [PaypalController::class , 'capturePayment']);
 
 });

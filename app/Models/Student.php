@@ -5,12 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Sanctum\HasApiTokens;
 
 class Student extends user
 {
-    use HasFactory, HasApiTokens;
+    use HasFactory, HasApiTokens, SoftDeletes;
 
     protected $table = 'students';
 
@@ -32,6 +34,11 @@ class Student extends user
         return $this->belongsToMany(Instrument::class);
     }
 
+    public function lessons(): HasMany
+    {
+        return $this->hasMany(Lesson::class);
+    }
+
     public function parent(): BelongsTo
     {
         return $this->belongsTo(Parents::class, 'parent_id');
@@ -41,4 +48,16 @@ class Student extends user
     {
         return $this->morphMany(Transaction::class, 'transactional');
     }
+
+
+    protected static function boot(): void
+    {
+        parent::boot();
+        static::deleting(function ($student) {
+            $student->lessons()->each(function ($lesson) {
+                $lesson->delete();
+            });
+        });
+    }
+
 }

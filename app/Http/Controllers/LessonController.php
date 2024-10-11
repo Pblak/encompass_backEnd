@@ -4,9 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Instrument;
 use App\Models\Lesson;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-
 
 /**
  * Class LessonController
@@ -18,34 +19,48 @@ use Illuminate\Support\Facades\DB;
 class LessonController extends Controller
 {// use try catch and DB::beginTransaction() and DB::commit() and DB::rollBack()
 
-    public function getLessons(Request $request)
+    public function getLessons(Request $request): JsonResponse
     {
-        $lessons = Lesson::with([
+//        dump($request->get('withTrashed'));
+        $relations = [
             'teacher',
             'student',
             'instrument',
-            'room' ,
+            'room',
             'instances',
             'transactions',
-        ])->get();
+        ];
+        if (auth()->checkTable('users')) {
+            $lessons = $request->get('withTrashed') ?
+                Lesson::withTrashed()->with($relations)->get() :
+                Lesson::with($relations)->get();
+        } else {
+            $lessons = $request->get('withTrashed') ?
+                $request->user()->studentLessons()->withTrashed()->with($relations)->get() :
+                $request->user()->studentLessons()->with($relations)->get();
+        }
         return response()->json($lessons);
     }
 
-    public function getLesson(Request $request)
+    public function getLesson(Request $request): JsonResponse
     {
-        $lesson = Lesson::with([
+        $relations = [
             'teacher',
             'student',
             'instrument',
-            'room' ,
+            'room',
             'instances',
             'transactions',
-        ])->find($request->id);
-
+        ];
+        if (auth()->checkTable('users')) {
+            $lesson = Lesson::with($relations)->find($request->id);
+        }else {
+            $lesson = $request->user()->studentLessons()->with($relations)->find($request->id);
+        }
         return response()->json($lesson);
     }
 
-    public function updateLesson(Request $request)
+    public function updateLesson(Request $request): JsonResponse
     {
         // update a lesson
         DB::beginTransaction();
@@ -61,7 +76,7 @@ class LessonController extends Controller
 
     }
 
-    public function createLesson(Request $request)
+    public function createLesson(Request $request): JsonResponse
     {
         $request->validate([
             'teacher_id' => 'required|exists:teachers,id',
@@ -78,7 +93,6 @@ class LessonController extends Controller
         // get from plans the plan that has the id of the request->plan['id']
         $instrument_plan = collect($plans)->where('id', $request->instrument_plan['id'])->first();
         $request->merge(['instrument_plan' => $instrument_plan]);
-
 
 
         DB::beginTransaction();
@@ -113,9 +127,35 @@ class LessonController extends Controller
         }
     }
 
-    public function deleteLesson(Request $request, $id)
+    public function deleteLesson(Request $request): JsonResponse
     {
-        // delete a lesson
+        DB::beginTransaction();
+        try {
+            $request->validate([
+                'id' =>  'required|exists:lessons,id',
+            ]);
+            $lesson = Lesson::find($request->id);
+            if ($lesson->deleted_at) {
+                DB::commit();
+                return response()->json([
+                    'message' => 'Lesson restored successfully',
+                    '_t' => 'success',
+                ]);
+            }
+            $lesson->delete();
+            DB::commit();
+            return response()->json([
+                'message' => 'Lesson deleted successfully',
+                '_t' => 'success',
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'error' => $e->getMessage(),
+                'message' => 'Lesson not deleted',
+                '_t' => 'error',
+            ],  500);
+        }
     }
 
 

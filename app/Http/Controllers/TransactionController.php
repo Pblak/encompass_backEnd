@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Lesson;
 use App\Models\Student;
 use App\Models\Transaction;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Ramsey\Collection\Collection;
 
 class TransactionController extends Controller
 {
@@ -16,7 +18,7 @@ class TransactionController extends Controller
 
     public function getTransactions(Request $request)
     {
-        $transactions = $request->attributes->get('currentGuard') !=='admin'?$request->user()->transactions:Transaction::all();
+        $transactions = $request->attributes->get('currentGuard') !== 'admin' ? $request->user()->transactions : Transaction::all();
         return response()->json($transactions);
     }
 
@@ -40,7 +42,7 @@ class TransactionController extends Controller
         }
     }
 
-    public function createTransaction(Request $request)
+    public function createTransaction(Request $request): JsonResponse
     {
         $request->validate([
             'lesson_id' => 'required|exists:lessons,id',
@@ -50,21 +52,33 @@ class TransactionController extends Controller
 
         DB::beginTransaction();
         try {
+            $user = Auth::user();
             if ($lesson->payed_price + $request->amount > $lesson->price) {
                 return response()->json([
                     "message" => "Transaction amount exceeds lesson price",
                     "_t" => "error",
                 ]);
             }
-            $request->user()->transactions()->create($request->all());
+            $transaction = $user->transactions()->create([
+                'lesson_id' => $request->lesson_id,
+                'amount' => $request->amount,
+                'infos'=> $request->infos,
+                'payment_method' => $request->payment_method,
+                'notes' => $request->notes,
+                ]);
             DB::commit();
             return response()->json([
-                "message" =>  "Transaction created successfully",
+                "message" => "Transaction created successfully",
+                "transaction" => $transaction,
                 "_t" => "success",
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json(['error' => $e->getMessage()], 500);
+            return response()->json([
+                'message' => '',
+                'error' => $e->getMessage(),
+                "_t" => "error",
+            ], 500);
         }
     }
 

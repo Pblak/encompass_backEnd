@@ -23,7 +23,8 @@ class AuthController extends Controller
         $model = config("auth.providers.{$provider}.model");
 
         // Attempt to fetch the user
-        $user = (new $model)->where('email', $request->email)->first();
+        $user = (new $model)->where('email', $request->email)
+            ->orWhere('infos->username' ,$request->username)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json([

@@ -46,11 +46,36 @@ class ParentController extends Controller
         }
 
     }
-    public function deleteParent(Request $request, $id)
+    public function deleteParent(Request $request): JsonResponse
     {
-        $parent = Parents::find($id);
-        $parent->delete();
-        return response()->json($parent);
+//        dd($request);
+        DB::beginTransaction();
+        try {
+            $request->validate([
+                'id' =>  'required|exists:parents,id',
+            ]);
+            $parent = Parents::find($request->id);
+            if ($parent->deleted_at) {
+                DB::commit();
+                return response()->json([
+                    'message' => 'Parent already deleted',
+                    '_t' => 'warning',
+                ]);
+            }
+            $parent->delete();
+            DB::commit();
+            return response()->json([
+                'message' => 'Parent deleted successfully',
+                '_t' => 'success',
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'error' => $e->getMessage(),
+                'message' => 'Parent not deleted',
+                '_t' => 'error',
+            ],  500);
+        }
     }
 
 }

@@ -17,6 +17,7 @@ class Transaction extends Model
         "amount",
         "currency",
         "status",
+        'infos',
         "payment_method",
         "notes",
 
@@ -25,4 +26,7 @@ class Transaction extends Model
     {
         return $this->morphTo();
     }
+    protected $casts = [
+        'infos' => 'object'
+    ];
 }
