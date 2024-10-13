@@ -21,7 +21,6 @@ class LessonController extends Controller
 
     public function getLessons(Request $request): JsonResponse
     {
-//        dump($request->get('withTrashed'));
         $relations = [
             'teacher',
             'student',
@@ -36,8 +35,8 @@ class LessonController extends Controller
                 Lesson::with($relations)->get();
         } else {
             $lessons = $request->get('withTrashed') ?
-                $request->user()->studentLessons()->withTrashed()->with($relations)->get() :
-                $request->user()->studentLessons()->with($relations)->get();
+                $request->user()->lessons()->withTrashed()->with($relations)->get() :
+                $request->user()->lessons()->with($relations)->get();
         }
         return response()->json($lessons);
     }

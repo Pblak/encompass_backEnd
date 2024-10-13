@@ -16,18 +16,27 @@ class TransactionController extends Controller
 {
     // CRUD for transactions
 
-    public function getTransactions(Request $request)
+    public function getTransactions(Request $request): JsonResponse
     {
-        $transactions = $request->attributes->get('currentGuard') !== 'admin' ? $request->user()->transactions : Transaction::all();
+        if ($request->attributes->get('currentGuard') !== 'admin') {
+            $transactions = $request->user()->lessons()->with(['transactions'])->get()
+                ->flatMap(function ($lesson) {
+                    return $lesson->transactions;
+                });
+
+        } else {
+            $transactions = Transaction::with(['transactional'])->get();
+        }
+
         return response()->json($transactions);
     }
 
-    public function getTransaction(Request $request)
+    public function getTransaction(Request $request): JsonResponse
     {
         return response()->json(Transaction::find($request->id));
     }
 
-    public function updateTransaction(Request $request)
+    public function updateTransaction(Request $request): JsonResponse
     {
         // update a transaction
         DB::beginTransaction();
@@ -82,14 +91,14 @@ class TransactionController extends Controller
         }
     }
 
-    public function deleteTransaction(Request $request)
+    public function deleteTransaction(Request $request): JsonResponse
     {
         $transaction = Transaction::find($request->id);
         $transaction->delete();
         return response()->json(['message' => 'Transaction deleted']);
     }
 
-    public function getStudentTransactions(Request $request)
+    public function getStudentTransactions(Request $request): JsonResponse
     {
         return response()->json(Student::find($request->id)->transactions);
     }

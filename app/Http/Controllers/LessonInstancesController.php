@@ -44,7 +44,7 @@ class LessonInstancesController extends Controller
         try {
             $request->validate([
                 'id' => 'required|exists:lesson_instances,id',
-                'status' => 'required|in:scheduled,in_progress,completed,cancelled',
+                'status' => 'nullable|in:scheduled,in_progress,completed,cancelled',
             ]);
             $lessonInstance = LessonInstance::find($request->id);
             $lessonInstance->update($request->all());

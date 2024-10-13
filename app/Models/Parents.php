@@ -21,7 +21,7 @@ class Parents extends User
         return $this->hasMany(Student::class, 'parent_id');
     }
 
-    public function studentLessons(): HasManyThrough
+    public function lessons(): HasManyThrough
     {
         return $this->hasManyThrough(Lesson::class, Student::class, 'parent_id', 'student_id');
     }

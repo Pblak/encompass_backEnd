@@ -26,6 +26,14 @@ class Transaction extends Model
     {
         return $this->morphTo();
     }
+
+    // get lessons from lesson_id
+    public function lesson()
+    {
+        return $this->belongsTo(Lesson::class);
+    }
+
+
     protected $casts = [
         'infos' => 'object'
     ];

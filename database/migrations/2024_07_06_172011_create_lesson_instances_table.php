@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('lesson_id');
             $table->unsignedBigInteger('room_id');
+
             $table->dateTime('start');
             $table->integer('duration');
             $table->enum('status', ['scheduled', 'in_progress', 'completed','cancelled']);
