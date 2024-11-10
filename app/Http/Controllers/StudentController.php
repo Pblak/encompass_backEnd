@@ -19,11 +19,11 @@ class StudentController extends Controller
         ];
 
         if (auth()->checkTable('users')) {
-            $students = $request->get('withTrashed') ?
+            $students = $request->withTrashed === "true" ?
                 Student::withTrashed()->with($relations)->get() :
                 Student::with($relations)->get();
         } else {
-            $students = $request->get('withTrashed') ?
+            $students = $request->withTrashed === "true" ?
                 $request->user()->students()->withTrashed()->with($relations)->get() :
                 $request->user()->students()->with($relations)->get();
         }
@@ -35,11 +35,33 @@ class StudentController extends Controller
         return response()->json(Student::with(['instruments'])->find($id));
     }
 
-    public function updateStudent(Request $request, $id): JsonResponse
+    public function updateStudent(Request $request): JsonResponse
     {
-        $student = Student::find($id);
-        $student->update($request->all());
-        return response()->json($student);
+        DB::beginTransaction();
+        try {
+            $request->validate([
+                'id' => 'required|exists:students,id',
+                'first_name' => 'required',
+                'last_name' => 'required',
+                'email' => 'nullable|email|unique:students,email,' . $request->id,
+                'parent_id' => 'required|exists:parents,id',
+            ]);
+            $student = Student::find($request->id);
+            $student->update($request->all());
+            DB::commit();
+            return response()->json([
+                'result' => $student,
+                'message' => 'Student updated successfully',
+                '_t' => 'success',
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => $e->getMessage(),
+//                'message' => 'Student not updated',
+                '_t' => 'error',
+            ]);
+        }
     }
 
     public function createStudent(Request $request): JsonResponse

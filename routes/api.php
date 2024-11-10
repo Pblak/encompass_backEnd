@@ -49,7 +49,7 @@ Route::middleware( 'auth.multiGuard:student,teacher,parent,admin' )->group(funct
 
     Route::get('/getParents', [ParentController::class, 'getParents']);
     Route::get('/getParent/{id}', [ParentController::class, 'getParent']);
-    Route::put('/updateParent/{id}', [ParentController::class, 'updateParent']);
+    Route::post('/updateParent', [ParentController::class, 'updateParent']);
     Route::post('/createParent', [ParentController::class, 'createParent']);
     Route::post('/deleteParent', [ParentController::class, 'deleteParent']);
 
@@ -60,7 +60,7 @@ Route::middleware( 'auth.multiGuard:student,teacher,parent,admin' )->group(funct
 
     Route::post('/getStudents', [StudentController::class, 'getStudents']);
     Route::get('/getStudent/{id}', [StudentController::class, 'getStudent']);
-    Route::put('/updateStudent/{id}', [StudentController::class, 'updateStudent']);
+    Route::post('/updateStudent', [StudentController::class, 'updateStudent']);
     Route::post('/createStudent', [StudentController::class, 'createStudent']);
     Route::post('/deleteStudent', [StudentController::class, 'deleteStudent']);
 
