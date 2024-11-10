@@ -22,7 +22,6 @@ class AuthController extends Controller
         // Determine the model based on the provider
 //        $model = config("auth.providers.{$provider}.model");
 
-        // Attempt to fetch the user
 //        $user = (new $model)->where('email', $request->email)
 //            ->orWhere('infos->username' ,$request->username)->first();
 

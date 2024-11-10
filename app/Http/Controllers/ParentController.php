@@ -11,18 +11,48 @@ class ParentController extends Controller
 {
     public function getParents(Request $request): JsonResponse
     {
-        return response()->json(Parents::with(['students'])->get());
+        $relations = [
+            'students',
+        ];
+        $parents = $request->withTrashed === "true" ?
+            Parents::withTrashed()->with($relations)->get() :
+            Parents::with($relations)->get();
+
+        return response()->json($parents);
     }
+
     public function getParent(Request $request, $id): JsonResponse
     {
         return response()->json(Parents::find($id));
     }
-    public function updateParent(Request $request, $id): JsonResponse
+
+    public function updateParent(Request $request): JsonResponse
     {
-        $parent = Parents::find($id);
-        $parent->update($request->all());
-        return response()->json($parent);
+       DB::beginTransaction();
+        try {
+            $request->validate([
+                'id' => 'required|exists:parents,id',
+                'first_name' => 'required',
+                'last_name' => 'required',
+                'email' => 'nullable|email|unique:parents,email,' . $request->id,
+            ]);
+            $parent = Parents::find($request->id);
+            $parent->update($request->all());
+            DB::commit();
+            return response()->json([
+                'result' => $parent,
+                'message' => 'Parent updated successfully',
+                '_t' => 'success',
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => $e->getMessage(),
+                '_t' => 'error',
+            ], 500);
+        }
     }
+
     public function createParent(Request $request): JsonResponse
     {
         $request->validate([
@@ -46,13 +76,14 @@ class ParentController extends Controller
         }
 
     }
+
     public function deleteParent(Request $request): JsonResponse
     {
 //        dd($request);
         DB::beginTransaction();
         try {
             $request->validate([
-                'id' =>  'required|exists:parents,id',
+                'id' => 'required|exists:parents,id',
             ]);
             $parent = Parents::find($request->id);
             if ($parent->deleted_at) {
@@ -74,7 +105,7 @@ class ParentController extends Controller
                 'error' => $e->getMessage(),
                 'message' => 'Parent not deleted',
                 '_t' => 'error',
-            ],  500);
+            ], 500);
         }
     }
 

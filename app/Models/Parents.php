@@ -15,7 +15,16 @@ class Parents extends User
 
 
     protected $table = 'parents';
-
+    protected $fillable = [
+        'first_name',
+        'last_name',
+        'email',
+        'password',
+        'infos'
+    ];
+    protected $casts = [
+        'infos' => 'array',
+    ];
     public function students(): HasMany
     {
         return $this->hasMany(Student::class, 'parent_id');
