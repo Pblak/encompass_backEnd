@@ -14,16 +14,7 @@ class AuthController extends Controller
 {
     public function login(Request $request): JsonResponse
     {
-        $accountType = $request->accountType && in_array($request->accountType, ['student', 'teacher', 'parent']) ? $request->accountType : 'web';
-
-        // Determine the provider based on the guard
-//        $provider = config("auth.guards.{$accountType}.provider");
-
-        // Determine the model based on the provider
-//        $model = config("auth.providers.{$provider}.model");
-
-//        $user = (new $model)->where('email', $request->email)
-//            ->orWhere('infos->username' ,$request->username)->first();
+        $accountType = $request->accountType && in_array($request->accountType, ['students', 'teachers', 'parents']) ? $request->accountType : 'web';
 
         $attemptLogin = call_user_func([$this, $accountType], $request);
 
@@ -35,7 +26,7 @@ class AuthController extends Controller
 
         $token = $attemptLogin->user->createToken('auth_token')->plainTextToken;
         $user = $attemptLogin->user;
-        $user['accountType'] = $accountType;
+        $user['accountType'] = $accountType === "web" ? "users" : $accountType;
 
         return response()->json([
             'token' => $token,
@@ -43,18 +34,18 @@ class AuthController extends Controller
         ]);
     }
 
-    public function student(Request $request): object
+    public function students(Request $request): object
     {
         $request->validate([
             'username' => 'required',
             'password' => 'required',
         ]);
-        $user  = Student::where('infos->username', $request->username)->first();
+        $user = Student::where('infos->username', $request->username)->first();
         if (!$user || !Hash::check($request->password, $user->password)) {
             return (object)[
                 'status' => false,
             ];
-        }else{
+        } else {
             return (object)[
                 'status' => true,
                 'user' => $user
@@ -73,14 +64,15 @@ class AuthController extends Controller
             return (object)[
                 'status' => false,
             ];
-        }else{
+        } else {
             return (object)[
                 'status' => true,
                 'user' => $user
             ];
         }
     }
-    public function parent(Request $request): object
+
+    public function parents(Request $request): object
     {
         $request->validate([
             'email' => 'required|email',
@@ -91,7 +83,7 @@ class AuthController extends Controller
             return (object)[
                 'status' => false,
             ];
-        }else{
+        } else {
             return (object)[
                 'status' => true,
                 'user' => $user
@@ -99,7 +91,7 @@ class AuthController extends Controller
         }
     }
 
-    public function teacher(Request $request)
+    public function teachers(Request $request)
     {
         $request->validate([
             'email' => 'required|email',
@@ -110,7 +102,7 @@ class AuthController extends Controller
             return (object)[
                 'status' => false,
             ];
-        }else{
+        } else {
             return (object)[
                 'status' => true,
                 'user' => $user

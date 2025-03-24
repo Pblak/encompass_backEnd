@@ -6,6 +6,7 @@ use App\Models\Parents;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class ParentController extends Controller
 {
@@ -28,7 +29,7 @@ class ParentController extends Controller
 
     public function updateParent(Request $request): JsonResponse
     {
-       DB::beginTransaction();
+        DB::beginTransaction();
         try {
             $request->validate([
                 'id' => 'required|exists:parents,id',
@@ -36,8 +37,16 @@ class ParentController extends Controller
                 'last_name' => 'required',
                 'email' => 'nullable|email|unique:parents,email,' . $request->id,
             ]);
-            $parent = Parents::find($request->id);
-            $parent->update($request->all());
+            $updateData = (object)$request->except('avatar');
+
+            if ($request->file('infos.avatar')) {
+                $imageFile = $request->file('infos.avatar');
+                $path = 'images/parents/' . $request->id . '/avatar.' . $imageFile->getClientOriginalExtension();
+                Storage::disk('public')->put($path, file_get_contents($imageFile->getRealPath()));
+                $updateData->infos['avatar'] = 'storage/' . $path;
+            }
+            $parent = Parents::find($updateData->id);
+            $parent->update((array)$updateData);
             DB::commit();
             return response()->json([
                 'result' => $parent,

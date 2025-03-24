@@ -4,6 +4,7 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\InstrumentController;
 use App\Http\Controllers\LessonController;
 use App\Http\Controllers\LessonInstancesController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\PackageController;
 use App\Http\Controllers\ParentController;
 use App\Http\Controllers\PaypalController;
@@ -101,6 +102,15 @@ Route::middleware( 'auth.multiGuard:student,teacher,parent,admin' )->group(funct
     Route::post('/updateTransaction', [TransactionController::class, 'updateTransaction']);
     Route::post('/createTransaction', [TransactionController::class, 'createTransaction']);
     Route::delete('/deleteTransaction/{id}', [TransactionController::class, 'deleteTransaction']);
+
+    // messages
+//    Route::get('/getMessages', [MessageController::class, 'getMessages']);
+    Route::post('/searchUserForChat', [MessageController::class, 'searchUserForChat']);
+    Route::post('/createMessage', [MessageController::class, 'createMessage']);
+    Route::post('/getConversation', [MessageController::class, 'getConversation']);
+    Route::post('/getChatUsers', [MessageController::class, 'getChatUsers']);
+
+
     // paypal
     Route::post('/createPaypalOrder' , [PaypalController::class , 'createOrder']);
     Route::post('/capturePaypalOrder' , [PaypalController::class , 'capturePayment']);
