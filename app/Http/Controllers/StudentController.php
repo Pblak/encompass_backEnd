@@ -7,6 +7,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class StudentController extends Controller
 {
@@ -46,8 +47,18 @@ class StudentController extends Controller
                 'email' => 'nullable|email|unique:students,email,' . $request->id,
                 'parent_id' => 'required|exists:parents,id',
             ]);
-            $student = Student::find($request->id);
-            $student->update($request->all());
+
+            $updateData = (object)$request->except('avatar');
+
+            if ($request->file('infos.avatar')) {
+                $imageFile = $request->file('infos.avatar');
+                $path = 'images/students/' . $request->id . '/avatar.' . $imageFile->getClientOriginalExtension();
+                Storage::disk('public')->put($path, file_get_contents($imageFile->getRealPath()));
+                $updateData->infos['avatar'] = 'storage/' . $path;
+            }
+
+            $student = Student::find($updateData->id);
+            $student->update((array)$updateData);
             DB::commit();
             return response()->json([
                 'result' => $student,

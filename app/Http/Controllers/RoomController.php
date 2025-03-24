@@ -3,24 +3,23 @@
 namespace App\Http\Controllers;
 
 use App\Models\Room;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class RoomController extends Controller
 {
-
-
-    public function getRooms(Request $request): \Illuminate\Http\JsonResponse
+    public function getRooms(Request $request): JsonResponse
     {
         return response()->json(Room::all());
     }
 
-    public function getRoom(Request $request): \Illuminate\Http\JsonResponse
+    public function getRoom(Request $request): JsonResponse
     {
         return response()->json(Room::find($request->id));
     }
 
-    public function updateRoom(Request $request): \Illuminate\Http\JsonResponse
+    public function updateRoom(Request $request): JsonResponse
     {
         DB::beginTransaction();
         try {
@@ -42,7 +41,7 @@ class RoomController extends Controller
         }
     }
 
-    public function createRoom(Request $request): \Illuminate\Http\JsonResponse
+    public function createRoom(Request $request): JsonResponse
     {
         $request->validate([
             'name' => 'required',
@@ -67,6 +66,4 @@ class RoomController extends Controller
             ]);
         }
     }
-
-
 }
