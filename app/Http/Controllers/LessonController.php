@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Instrument;
 use App\Models\Lesson;
+use App\Models\Parents;
+use App\Models\Student;
+use App\Models\Teacher;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -30,9 +33,25 @@ class LessonController extends Controller
             'transactions',
         ];
         if (auth()->checkTable('users')) {
-            $lessons = $request->get('withTrashed') ?
-                Lesson::withTrashed()->with($relations)->get() :
-                Lesson::with($relations)->get();
+            if ($request->subject && $request->id) {
+                $request->validate([
+                    'subject' => 'required|string|in:teachers,students,parents',
+                    'id' => 'required|exists:' . $request->subject . ',id',
+                ]);
+                $model = [
+                    'teachers' => Teacher::class,
+                    'students' => Student::class,
+                    'parents' => Parents::class,
+                ];
+                $user = $model[$request->subject]::find($request->id);
+                $lessons = $request->get('withTrashed') ?
+                    $user->lessons()->withTrashed()->with($relations)->get() :
+                    $user->lessons()->with($relations)->get();
+            }else{
+                $lessons = $request->get('withTrashed') ?
+                    Lesson::withTrashed()->with($relations)->get() :
+                    Lesson::with($relations)->get();
+            }
         } else {
             $lessons = $request->get('withTrashed') ?
                 $request->user()->lessons()->withTrashed()->with($relations)->get() :
