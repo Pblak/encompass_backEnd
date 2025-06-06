@@ -88,6 +88,7 @@ Route::middleware( 'auth.multiGuard:student,teacher,parent,admin' )->group(funct
 
     // lesson Instances
     Route::post('/updateLessonInstance', [LessonInstancesController::class, 'updateLessonInstance']);
+    Route::post('/getTeacherLessonInstances', [LessonInstancesController::class, 'getTeacherLessonInstances']);
 
     // rooms
     Route::get('/getRooms', [RoomController::class, 'getRooms']);

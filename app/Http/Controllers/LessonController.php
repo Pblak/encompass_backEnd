@@ -57,6 +57,7 @@ class LessonController extends Controller
                 $request->user()->lessons()->withTrashed()->with($relations)->get() :
                 $request->user()->lessons()->with($relations)->get();
         }
+
         return response()->json($lessons);
     }
 
