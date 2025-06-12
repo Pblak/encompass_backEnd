@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\LessonInstance;
+use App\Models\Student;
 use App\Models\Teacher;
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
@@ -129,7 +130,7 @@ class LessonInstancesController extends Controller
         return $date->copy()->addDays($totalDaysToAdd);
     }
 
-    public function getTeacherLessonInstances(Request $request)
+    public function getTeacherLessonInstances(Request $request): JsonResponse
     {
         $request->validate([
             'teacher_id' => 'required|exists:teachers,id',
@@ -140,4 +141,14 @@ class LessonInstancesController extends Controller
         ]);
     }
 
+    public function getStudentLessonInstances(Request $request): JsonResponse
+    {
+        $request->validate([
+            'student_id' => 'required|exists:students,id',
+        ]);
+        $student = Student::find($request->student_id);
+        return response()->json([
+            'instances' => $student->lessonInstances()->with('lesson')->get(),
+        ]);
+    }
 }

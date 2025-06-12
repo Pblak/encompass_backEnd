@@ -50,6 +50,12 @@ class Student extends user
     }
 
 
+    public function lessonInstances()
+    {
+        return $this->hasManyThrough(LessonInstance::class, Lesson::class);
+    }
+
+
     protected static function boot(): void
     {
         parent::boot();

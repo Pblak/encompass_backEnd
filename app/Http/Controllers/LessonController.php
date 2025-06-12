@@ -95,8 +95,9 @@ class LessonController extends Controller
 
     }
 
-    public function createLesson(Request $request): JsonResponse
+    public function createLesson(Request $request)
     {
+
         $request->validate([
             'teacher_id' => 'required|exists:teachers,id',
             'instrument_id' => 'required|exists:instruments,id',
