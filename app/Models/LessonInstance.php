@@ -16,6 +16,7 @@ class LessonInstance extends Model
         'student_id',
         'teacher_id',
         'start',
+        'duration',
         'room_id',
         'status',
     ];
