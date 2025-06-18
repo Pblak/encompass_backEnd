@@ -8,10 +8,60 @@ use App\Models\Teacher;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
+    // register a new Parent / Student / Teacher
+    public function register(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|min:6',
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'accountType' => 'required|in:students,teachers,parents',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $user = null;
+            switch ($request->accountType) {
+                case 'teachers':
+                    $user = Teacher::create([
+                        'email' => $request->email,
+                        'first_name' => $request->first_name,
+                        'last_name' => $request->last_name,
+                        'infos' => [],
+                        'password' => Hash::make($request->password),
+                    ]);
+                    break;
+                case 'parents':
+                    $user = Parents::create([
+                        'email' => $request->email,
+                        'first_name' => $request->first_name,
+                        'last_name' => $request->last_name,
+                        'infos' => [],
+                        'password' => Hash::make($request->password),
+                    ]);
+                    break;
+            }
+            DB::commit();
+            if ($user) {
+                // log in the user
+                $this->login($request);
+            }
+
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            return response()->json([
+                'message' => 'User registration failed',
+                'error' => $exception->getMessage()
+            ], 500);
+        }
+    }
+
     public function login(Request $request): JsonResponse
     {
         $accountType = $request->accountType && in_array($request->accountType, ['students', 'teachers', 'parents']) ? $request->accountType : 'web';

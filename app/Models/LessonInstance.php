@@ -16,6 +16,7 @@ class LessonInstance extends Model
         'student_id',
         'teacher_id',
         'start',
+        'duration',
         'room_id',
         'status',
     ];
@@ -44,5 +45,4 @@ class LessonInstance extends Model
             return  Lesson::find($this->lesson_id)->teacher;
         }
     }
-
 }

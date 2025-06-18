@@ -27,29 +27,33 @@ class UpdateLessonStatusesJob implements ShouldQueue
     /**
      * Execute the job.
      */
-    public function handle(): void
+    public function handle()
     {
-        // Get the current time
-        $now = Carbon::now();
-        // Update 'scheduled' lessons to 'cancelled'
-        $cancelledInstances = LessonInstance::where('status', 'scheduled')
-            ->whereRaw('DATE_ADD(start, INTERVAL duration MINUTE) < ?', [$now])
-            ->get();
+        try {
+            $now = Carbon::now();
 
-        foreach ($cancelledInstances as $instance) {
-            $instance->update(['status' => 'cancelled']);
-            event(new LessonInstanceStatusUpdatedEvent($instance));
+            // Only update 'in_progress' lessons to 'completed' when their time has ended
+            $completedInstances = LessonInstance::where('status', 'in_progress')
+                ->whereRaw('DATE_ADD(start, INTERVAL duration MINUTE) < ?', [$now])
+                ->get();
+
+            $completedCount = 0;
+            foreach ($completedInstances as $instance) {
+                try {
+                    $instance->update(['status' => 'completed']);
+                    event(new LessonInstanceStatusUpdatedEvent($instance));
+                    $completedCount++;
+                } catch (\Exception $e) {
+                    Log::error("Failed to update lesson instance {$instance->id}: " . $e->getMessage());
+                }
+            }
+
+            if ($completedCount > 0) {
+                Log::info("UpdateLessonStatusesJob: Updated {$completedCount} lesson instances to completed");
+            }
+        } catch (\Exception $e) {
+            Log::error("UpdateLessonStatusesJob failed: " . $e->getMessage());
+            throw $e;
         }
-
-        // Update 'in_progress' lessons to 'completed'
-        $completedInstances = LessonInstance::where('status', 'in_progress')
-            ->whereRaw('DATE_ADD(start, INTERVAL duration MINUTE) < ?', [$now])
-            ->get();
-
-        foreach ($completedInstances as $instance) {
-            $instance->update(['status' => 'completed']);
-            event(new LessonInstanceStatusUpdatedEvent($instance));
-        }
-
     }
 }

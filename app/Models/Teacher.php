@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Sanctum\HasApiTokens;
 
@@ -32,6 +33,13 @@ class Teacher extends User
     {
         return $this->hasMany(Lesson::class);
     }
+
+    // lessons instances through lessons
+    public function lessonInstances(): HasManyThrough
+    {
+        return $this->hasManyThrough(LessonInstance::class, Lesson::class);
+    }
+
 }
 
 

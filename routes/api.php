@@ -32,7 +32,7 @@ Route::get('/test', function () {
 
 // route for login
 Route::post('/login', [App\Http\Controllers\AuthController::class, 'login']);
-
+    Route::post('/register', [App\Http\Controllers\AuthController::class, 'register']);
 
 Route::middleware( 'auth.multiGuard:student,teacher,parent,admin' )->group(function () {
     Route::post('/logout', [App\Http\Controllers\AuthController::class, 'logout']);
@@ -88,6 +88,8 @@ Route::middleware( 'auth.multiGuard:student,teacher,parent,admin' )->group(funct
 
     // lesson Instances
     Route::post('/updateLessonInstance', [LessonInstancesController::class, 'updateLessonInstance']);
+    Route::post('/getTeacherLessonInstances', [LessonInstancesController::class, 'getTeacherLessonInstances']);
+    Route::post('/getStudentLessonInstances', [LessonInstancesController::class, 'getStudentLessonInstances']);
 
     // rooms
     Route::get('/getRooms', [RoomController::class, 'getRooms']);

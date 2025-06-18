@@ -57,6 +57,7 @@ class LessonController extends Controller
                 $request->user()->lessons()->withTrashed()->with($relations)->get() :
                 $request->user()->lessons()->with($relations)->get();
         }
+
         return response()->json($lessons);
     }
 
@@ -94,8 +95,9 @@ class LessonController extends Controller
 
     }
 
-    public function createLesson(Request $request): JsonResponse
+    public function createLesson(Request $request)
     {
+
         $request->validate([
             'teacher_id' => 'required|exists:teachers,id',
             'instrument_id' => 'required|exists:instruments,id',
