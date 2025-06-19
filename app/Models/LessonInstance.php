@@ -37,12 +37,18 @@ class LessonInstance extends Model
     {
         return $this->hasOne(Room::class);
     }
+    
+    public function teacher(): BelongsTo
+    {
+        return $this->belongsTo(Teacher::class, 'teacher_id');
+    }
+    
     public function getTeacherAttribute()
     {
         if ($this->teacher_id) {
             return Teacher::find($this->teacher_id);
         } else {
-            return  Lesson::find($this->lesson_id)->teacher;
+            return $this->lesson->teacher ?? Lesson::find($this->lesson_id)->teacher;
         }
     }
 }
